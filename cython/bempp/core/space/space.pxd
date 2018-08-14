@@ -54,6 +54,10 @@ cdef extern from "bempp/space/piecewise_linear_continuous_scalar_space.hpp" name
     cdef shared_ptr[c_Space[T]] adaptivePiecewiseLinearContinuousScalarSpace[T](const shared_ptr[c_Grid]& grid)
     cdef shared_ptr[c_Space[T]] adaptivePiecewiseLinearContinuousScalarSpace[T](const shared_ptr[c_Grid]& grid, vector[int] domains,
             cbool closed, cbool strictly_on_segment)
+cdef extern from "bempp/space/piecewise_linear_continuous_on_domains_scalar_space.hpp" namespace "Bempp":
+    cdef shared_ptr[c_Space[T]] adaptivePiecewiseLinearContinuousOnDomainsScalarSpace[T](const shared_ptr[c_Grid]& grid)
+    cdef shared_ptr[c_Space[T]] adaptivePiecewiseLinearContinuousOnDomainsScalarSpace[T](const shared_ptr[c_Grid]& grid, vector[int] domains,
+            cbool closed, cbool strictly_on_segment)
 cdef extern from "bempp/space/piecewise_linear_discontinuous_scalar_space.hpp" namespace "Bempp":
     cdef shared_ptr[c_Space[T]] adaptivePiecewiseLinearDiscontinuousScalarSpace[T](const shared_ptr[c_Grid]& grid)
     cdef shared_ptr[c_Space[T]] adaptivePiecewiseLinearDiscontinuousScalarSpace[T](const shared_ptr[c_Grid]& grid, vector[int] domains,

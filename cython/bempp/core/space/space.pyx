@@ -225,6 +225,7 @@ def function_space(Grid grid, kind, order, domains=None, cbool closed=True, cboo
         The type of space. Currently, the following types
         are supported:
             "P" : Continuous and piecewise polynomial functions.
+            "D-P" : Continuous and piecewise polynomial functions that are discontinuous between domains.
             "DP" : Discontinuous and elementwise polynomial functions.
             "RT": Raviart-Thomas Vector spaces.
             "RWG": RWG Vector spaces.
@@ -304,6 +305,18 @@ def function_space(Grid grid, kind, order, domains=None, cbool closed=True, cboo
             else:
                 s.impl_.assign(reverse_const_pointer_cast(
                         shared_ptr[c_Space[double]](adaptivePiecewisePolynomialContinuousScalarSpace[double](grid.impl_, order, domains, closed, strictly_on_segment))))
+    elif kind=="D-P":
+        if not (order>=1 and order <=10):
+            raise ValueError("Order must be between 1 and 10")
+        if (order==1):
+            if domains is None:
+                s.impl_.assign(reverse_const_pointer_cast(
+                        shared_ptr[c_Space[double]](adaptivePiecewiseLinearContinuousOnDomainsScalarSpace[double](grid.impl_))))
+            else:
+                s.impl_.assign(reverse_const_pointer_cast(
+                        shared_ptr[c_Space[double]](adaptivePiecewiseLinearContinuousOnDomainsScalarSpace[double](grid.impl_, domains, closed, strictly_on_segment))))
+        else:
+            raise ValueError("Order must be 1")
     elif kind=="DP":
         if not (order>=0 and order <=10):
             raise ValueError("Order must be between 0 and 10")

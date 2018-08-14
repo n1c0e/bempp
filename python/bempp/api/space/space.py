@@ -351,6 +351,64 @@ class ContinuousPolynomialSpace(Space):
         self._grid = grid
 
 
+class ContinuousOnDomainsPolynomialSpace(Space):
+    """Represents a space of continuous, polynomial functions."""
+
+    def __init__(
+            self,
+            grid,
+            order,
+            domains=None,
+            closed=True,
+            strictly_on_segment=False,
+            element_on_segment=False,
+            comp_key=None):
+
+        from bempp.core.space.space import function_space as _function_space
+        from bempp.api.assembly.functors import scalar_function_value_functor
+
+        super(
+            ContinuousOnDomainsPolynomialSpace,
+            self).__init__(
+                _function_space(
+                    grid._impl,
+                    "D-P",
+                    order,
+                    domains,
+                    closed,
+                    strictly_on_segment,
+                    True,
+                    element_on_segment),
+                comp_key)
+
+        self._order = order
+        self._has_non_barycentric_space = True
+        self._non_barycentric_space = self
+        if not closed:
+            self._discontinuous_space = function_space(
+                grid,
+                "DP",
+                order,
+                domains=domains,
+                closed=closed,
+                reference_point_on_segment=False,
+                element_on_segment=True)
+        else:
+            self._discontinuous_space = function_space(
+                grid,
+                "DP",
+                order,
+                domains=domains,
+                closed=closed,
+                reference_point_on_segment=True,
+                element_on_segment=strictly_on_segment)
+
+        self._super_space = self._discontinuous_space
+        self._evaluation_functor = scalar_function_value_functor()
+        self._is_barycentric = False
+        self._grid = grid
+
+
 class BarycentricContinuousPolynomialSpace(Space):
     """Represents a space of cont., polynomial fct. on a barycentric grid."""
 
@@ -807,6 +865,15 @@ def function_space(
         return BarycentricDiscontinuousPolynomialSpace(grid, order, comp_key)
     elif kind == "P":
         return ContinuousPolynomialSpace(
+            grid,
+            order,
+            domains,
+            closed,
+            strictly_on_segment,
+            element_on_segment,
+            comp_key)
+    elif kind == "D-P":
+        return ContinuousOnDomainsPolynomialSpace(
             grid,
             order,
             domains,
