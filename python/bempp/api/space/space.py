@@ -434,13 +434,20 @@ class BarycentricContinuousPolynomialSpace(Space):
 class DualSpace(Space):
     """A space of piecewise constant dual functions over a barycentric grid."""
 
-    def __init__(self, grid, comp_key=None):
+    def __init__(self, grid,
+            domains=None,
+            closed=True,
+            strictly_on_segment=False,
+            element_on_segment=False,
+            comp_key=None):
 
         from bempp.core.space.space import function_space as _function_space
         from bempp.api.assembly.functors import scalar_function_value_functor
 
         super(DualSpace, self).__init__(
-            _function_space(grid._impl, "DUAL", 0), comp_key)
+            _function_space(grid._impl, "DUAL", 0,
+                            domains=domains, closed=closed, strictly_on_segment=strictly_on_segment,
+                            element_on_segment=element_on_segment), comp_key)
 
         self._order = 0
         self._has_non_barycentric_space = False
@@ -886,7 +893,7 @@ def function_space(
     elif kind == "DUAL":
         if order > 0:
             raise ValueError("Only order zero dual spaces supported.")
-        return DualSpace(grid, comp_key)
+        return DualSpace(grid, domains, closed, strictly_on_segment, element_on_segment, comp_key)
     elif kind == "RT":
         if order > 0:
             raise ValueError(

@@ -373,11 +373,14 @@ def function_space(Grid grid, kind, order, domains=None, cbool closed=True, cboo
     elif kind=="DUAL":
         if order != 0:
             raise ValueError("Only 0 order dual grid spaces are implemented.")
-        if domains is not None:
-            raise ValueError("Spaces on subdomains are not supported on dual grids.")
-        s.impl_.assign(reverse_const_pointer_cast(
-            shared_ptr[c_Space[double]](adaptivePiecewiseConstantDualGridScalarSpace[double](grid.impl_))
-        ))
+        if domains is None:
+            s.impl_.assign(reverse_const_pointer_cast(
+                shared_ptr[c_Space[double]](adaptivePiecewiseConstantDualGridScalarSpace[double](grid.impl_))
+            ))
+        else:
+            s.impl_.assign(reverse_const_pointer_cast(
+                shared_ptr[c_Space[double]](adaptivePiecewiseConstantDualGridScalarSpace[double](grid.impl_, domains, closed, strictly_on_segment))
+            ))
     elif kind == "B-P":
         if order != 1:
             raise ValueError("Only linear spaces on barycentric grids are supported.")
